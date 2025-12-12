@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  #Database Service
+  db:
+    image: mysql:8.0
+    environment:
+      
+      MYSQL_DATABASE: onlycoders
+      MYSQL_USER: onlycoders_user
+      MYSQL_PASSWORD: onlycoders_pass
+      MYSQL_ROOT_PASSWORD: root_secure_pass 
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - shared_network
+      
+   
+    healthcheck:
+      # Command to check if MySQL is running and accepting connections
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 10s
+      retries: 5 # Number of times to retry before reporting failure
+
+
+  prod_fastapi_hot_reload_sample:
+    build: .
+    env_file:
+      - .env
+    ports:
+      - '8001:8001'
+    volumes:
+      - ./app:/app
+      
+    
+    depends_on:
+      db:
+        condition: service_healthy
+        
+    command: uvicorn main:app --host 0.0.0.0 --port 8001 --reload
+    networks:
+      - shared_network
+
+networks:
+  shared_network:
+    external: true
+
+volumes:
+  db_data: 

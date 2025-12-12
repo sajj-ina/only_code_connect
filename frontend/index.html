@@ -1,0 +1,324 @@
+<!doctype html>  
+<html lang="en">  
+<head>  
+  <meta charset="utf-8" />  
+  <meta name="viewport" content="width=device-width,initial-scale=1" />  
+  <title>Only Coders — The Missing Link </title>  
+  <link rel="preconnect" href="https://fonts.googleapis.com">  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">  
+
+  <link rel="stylesheet" href="styles.css">  
+
+</head>  
+
+<body>  
+  <div class="page-bg"></div>  
+
+<header class="glass-nav"> 
+
+  <div class="nav-inner">  
+
+    <a href="index.html" class="brand"> 
+      <div class="logo">🔗</div> 
+      <div class="brand-text"> 
+        <div class="title">Only Coders</div> 
+      </div> 
+
+    </a> 
+    <!-- DESKTOP LINKS --> 
+
+    <nav class="nav-links"> 
+      <a href="#problem">Problem</a> 
+      <a href="#solution">Solution</a> 
+      <a href="#how">How It Works</a> 
+      <a href="#impact">Impact</a> 
+      <a href="#contact">Contact</a> 
+
+    </nav> 
+
+    <!-- DESKTOP CTA --> 
+
+    <div class="nav-cta"> 
+      <a class="btn btn-light" id="navLogin">Login</a> 
+      <a class="btn btn-primary" id="navSignup">Sign Up</a> 
+    </div> 
+
+    <!-- MOBILE MENU ICON --> 
+
+    <button class="hamburger" id="navToggle"> 
+      ☰ 
+
+    </button> 
+
+  </div> 
+  <!-- MOBILE DROPDOWN MENU --> 
+
+  <div class="mobile-menu" id="mobileMenu"> 
+    <a href="#problem">Problem</a> 
+    <a href="#solution">Solution</a> 
+    <a href="#how">How It Works</a> 
+    <a href="#impact">Impact</a> 
+    <a href="#contact">Contact</a> 
+    <a id="mobileLogin">Login</a> 
+    <a id="mobileSignup" class="signup-mobile">Sign Up</a> 
+
+  </div> 
+
+</header> 
+
+  <main>  
+
+    <!-- HERO -->  
+    <section class="hero">  
+      <div class="hero-inner"> 
+        <span class="pill">Bridging the Gap in Tech Recruitment</span>  
+        <h1>Where Opportunity <span class="accent">Finds Talent</span></h1>  
+        <p class="lead">  
+
+          In the age of AI-driven recruitment, entry-level candidates face unprecedented barriers.  
+
+          The Missing Link reveals their true potential—turning hidden achievements into career opportunities.  
+
+
+        </p>  
+
+        <div class="hero-ctas">  
+
+          <button class="btn btn-primary" id="openSignup2">Sign Up for Free →</button>  
+          <button class="btn btn-ghost">For Employers</button>  
+        </div>  
+
+      </div>  
+
+    </section>  
+
+    <!-- SIGNUP PANEL (centered overlay) -->  
+    <div class="modal" id="signupModal" aria-hidden="true">  
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="signupTitle">  
+        <div class="modal-header">  
+          <h3 id="signupTitle">Start showcasing your full potential</h3>  
+          <button class="modal-close" id="closeSignup" aria-label="Close">✕</button>  
+        </div>  
+        <div class="modal-body">  
+          <div class="socials">  
+            <button class="btn social">Continue with GitHub</button>  
+            <button class="btn social">Continue with LinkedIn</button>  
+          </div>  
+
+          <div class="divider">Or continue with email</div>  
+          <form id="signupForm" class="signup-form">  
+
+            <label>  
+              Full Name  
+              <input name="name" type="text" placeholder="John Doe" required>  
+            </label>  
+
+            <label>  
+              Email Address  
+              <input name="email" type="email" placeholder="you@example.com" required>  
+            </label>  
+
+            <label>  
+              Password  
+              <input name="password" type="password" placeholder="••••••••" required minlength="6">  
+            </label>  
+
+            <button type="submit" class="btn btn-primary full">Create Account</button>  
+          </form>  
+        </div>  
+      </div>  
+
+
+    </div>  
+
+<!-- SIGN-IN MODAL --> 
+
+  <div class="cta"> 
+    <button class="btn btn-light" id="openSignin">Sign In</button> 
+    <button class="btn btn-light" id="openSignup">Sign Up</button> 
+
+</div> 
+
+<div class="modal" id="signinModal" aria-hidden="true"> 
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="signinTitle"> 
+
+    <div class="modal-header"> 
+      <h3 id="signinTitle">Welcome Back</h3> 
+      <button class="modal-close" id="closeSignin" aria-label="Close">✕</button> 
+
+    </div> 
+
+    <div class="modal-body"> 
+      <form id="signinForm" class="signup-form"> 
+        <label> 
+
+          Email Address 
+          <input name="email" type="email" placeholder="you@example.com" required> 
+        </label> 
+
+        <label> 
+          Password 
+          <input name="password" type="password" placeholder="••••••••" required minlength="6"> 
+        </label> 
+        <button type="submit" class="btn btn-primary full">Sign In</button> 
+      </form> 
+    </div> 
+
+  </div> 
+</div> 
+
+    <!-- MISSION -->  
+    <section class="mission" id="solution">  
+      <div class="container">  
+        <div class="mission-card">  
+          <div class="icon">🎯</div>  
+
+          <h2>Our Mission</h2>  
+          <p class="mission-text">  
+
+            To build a world where individuals no longer need to chase jobs—where their expertise, lived experience,  
+            and knowledge naturally open doors to meaningful careers.  
+          </p>  
+          <p class="muted">  
+            The Missing Link is the first step in creating this future, integrated with Only Coders to form a complete  
+            ecosystem for entry-level tech talent.  
+          </p>  
+        </div>  
+        <div class="mission-actions">  
+          <div class="small-card">  
+            <h4>For Educational Institutions</h4>  
+            <p>Help your students showcase their full potential to employers</p>  
+            <a class="link">Partner with Us →</a>  
+          </div>  
+          <div class="small-card">  
+            <h4>For Employers</h4>  
+            <p>Access a pipeline of vetted, comprehensive candidate profiles</p>  
+            <a class="link">Get Early Access →</a>  
+          </div>  
+          <div class="small-card">  
+
+            <h4>For Candidates</h4>  
+            <p>Be among the first to have your full story told</p>  
+            <a class="link">Join Waitlist →</a>  
+          </div>  
+        </div>  
+      </div>  
+    </section>  
+    <!-- PROBLEM -->  
+
+    <section class="problem" id="problem">  
+      <div class="container">  
+        <div class="problem-header">  
+          <span class="badge">⚠️ The Crisis</span>  
+          <h2>Entry-Level Talent Is Being Left Behind</h2>  
+          <p class="muted">AI-driven recruitment systems are reshaping hiring practices in ways that disadvantage those just starting out.</p>  
+
+        </div>  
+
+        <div class="cards-grid">  
+          <article class="info-card red">  
+            <h4>The Compression Problem</h4>  
+            <p>Years of coursework, hackathons, freelance projects, and personal experiments compressed into a 30-minute interview or one-page CV.</p>  
+            <a class="link small">→ True potential remains hidden</a>  
+          </article>  
+          <article class="info-card purple">  
+
+            <h4>Vanishing Opportunities</h4>  
+            <p>Big Tech hiring fewer juniors. Startups bypassing entry-level roles. PwC cutting intake due to AI adoption.</p>  
+
+            <a class="link small">→ Career paths are closing</a>  
+          </article>  
+        </div>  
+      </div>  
+    </section>  
+
+    <!-- HOW STUDENTS SHARE DATA -->  
+    <section class="share" id="how">  
+      <div class="container">  
+        <h2>How Students Share Their Data</h2>  
+        <p class="muted">Two pathways to connect your learning platforms—designed for privacy, compliance, and ease of use</p>  
+
+        <div class="tabs">  
+          <button class="tab active" data-tab="individual">Individual Student Path</button>  
+          <button class="tab" data-tab="institutional">Institutional Partnership</button>  
+        </div>  
+        <div class="info-box">  
+          <h3>Student-Controlled Data Sharing</h3>  
+          <p>Students maintain full control over their data using OAuth-based authentication. No university IT intervention required—connect directly to your learning platforms with just a few clicks.</p>  
+
+          <div class="privacy">  
+            <div class="check">✔</div>  
+            <div>  
+              <strong>Privacy First</strong>  
+              <div class="muted">You decide what to share, when to share it, and can revoke access anytime</div>  
+            </div>  
+          </div>  
+        </div>  
+      </div>  
+    </section>  
+
+    <!-- INCLUSIVE FUTURE -->  
+
+     <section class="future" id="impact">  
+      <div class="container">  
+        <h2>Creating a More Inclusive Future</h2>  
+        <p class="muted">By focusing on the overlooked potential of early-career candidates, we're dismantling barriers to employment and creating a more inclusive, insight-driven hiring process.</p>  
+        <div class="cards-grid">  
+          <article class="info-card blue">  
+
+            <h4>For Students & Graduates</h4>  
+            <ul>  
+              <li>No more reducing years of work to a one-page CV</li>  
+              <li>Every project, hackathon, and learning moment counts</li>  
+              <li>Stand out based on actual skills and achievements</li>  
+              <li>Opportunities find you, not the other way around</li>  
+            </ul>  
+          </article>  
+
+          <article class="info-card violet">  
+            <h4>For Employers & Recruiters</h4>  
+            <ul>  
+              <li>Discover hidden talent AI recruitment tools miss</li>  
+              <li>Make data-driven hiring decisions with confidence</li>  
+              <li>Reduce bias by focusing on actual competencies</li>  
+              <li>Build diverse teams with overlooked potential</li>  
+            </ul>  
+          </article>  
+        </div>  
+      </div>  
+    </section>  
+
+  <!-- CONTACT SECTION --> 
+
+<section id="contact"> 
+  <div class="container"> 
+    <h2>Contact Us</h2> 
+    <p>Reach out via email, phone, or social media:</p> 
+    <ul> 
+      <li>Email: hello@onlycoders.com</li> 
+      <li>Phone: +123 456 7890</li> 
+      <li>Twitter: <a href="#">@onlycoders</a></li> 
+      <li>LinkedIn: <a href="#">Only Coders</a></li> 
+    </ul> 
+
+  </div> 
+
+</section> 
+<!-- FOOTER --> 
+<footer> 
+
+  <div class="footer-inner"> 
+    <div>© <span id="year"></span> Only Coders — The Missing Link</div> 
+    <div class="socials small"> 
+
+      <a href="#">Twitter</a> 
+      <a href="#">LinkedIn</a> 
+      <a href="#">GitHub</a> 
+
+    </div> 
+  </div> 
+</footer> 
+  </main>  
+  <script src="script.js"></script>  
+</body>  
+</html>  

@@ -1,0 +1,14 @@
+fastapi           # Web framework for building APIs
+uvicorn[standard] # ASGI server for FastAPI
+gunicorn          # WSGI server for running Python web applications
+python-jose       # Library for handling JWTs
+passlib[argon2]   # Password hashing library
+pydantic         # Data validation and settings management
+python-multipart # For handling form data
+python-dotenv
+requests
+sqlalchemy
+pymysql
+cryptography
+notion-client
+respx

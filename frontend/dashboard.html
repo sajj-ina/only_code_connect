@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Only Coders — Dashboard</title>
+
+<style>
+  :root{
+    --bg:#0f1720;
+    --sidebar:#213447;
+    --panel:#0f1726;
+    --muted: rgba(255,255,255,0.65);
+    --accent:#2f7fcf;
+    --accent-2:#7f5cff;
+    --glass: rgba(255,255,255,0.03);
+    --radius:14px;
+  }
+
+  html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Roboto,Arial; background:var(--bg); color:#eef2f6; -webkit-font-smoothing:antialiased}
+  .wrap{display:flex;min-height:100vh;gap:20px}
+
+  /* sidebar */
+  .sidebar{
+    width:260px;
+    background:linear-gradient(180deg,var(--sidebar),#1f3348);
+    border-radius:18px;
+    padding:18px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    display:flex;flex-direction:column;gap:18px;
+    margin:18px;
+  }
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{
+    width:46px;height:46px;border-radius:10px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:flex;align-items:center;justify-content:center;font-weight:800;color:#071126;
+  }
+  .brand h1{font-size:18px;margin:0}
+  .menu{flex:1; margin-top:6px}
+  .menu .section-title{font-size:12px;color:var(--muted);margin:12px 6px}
+  .nav-list{display:flex;flex-direction:column;gap:10px}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;color:#dff0ff;cursor:pointer;transition:all .18s}
+  .nav-item:hover{background:rgba(255,255,255,0.02);transform:translateX(4px)}
+  .nav-item.active{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#071126}
+  .nav-item svg{opacity:0.9}
+
+  .sidebar .logout{margin-top:auto;padding:12px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.04);cursor:pointer;color:var(--muted)}
+
+  /* main content */
+  .main{
+    flex:1;
+    margin:18px;
+    padding:18px;
+    border-radius:18px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    overflow:hidden;
+    display:flex;flex-direction:column;
+  }
+
+  /* top search bar */
+  .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+  .top-left{display:flex;align-items:center;gap:12px}
+  .search{flex:1;max-width:560px}
+  .search input{width:100%;padding:12px 16px;border-radius:26px;border:0;background:var(--glass);color:#fff;outline:none}
+
+  /* content wrapper */
+  .content{flex:1;overflow:auto;padding-right:8px}
+  .section{display:none;opacity:0;transform:translateY(8px);transition:all .26s}
+  .section.active{display:block;opacity:1;transform:none}
+
+  /* layout grids */
+  .grid-4{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:18px}
+  .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:18px}
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);
+  }
+
+  .welcome {display:flex;justify-content:space-between;gap:12px;align-items:center}
+  .welcome h2{margin:0}
+  .actions{display:flex;gap:10px}
+
+  .stat{padding:14px;border-radius:12px}
+  .stat h3{margin:0;font-size:18px}
+  .muted{color:var(--muted);font-size:13px}
+
+  /* profile */
+  .profile-top{display:flex;gap:18px;align-items:center}
+  .avatar{width:110px;height:110px;border-radius:12px;background:var(--glass);display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .avatar img{width:100%;height:100%;object-fit:cover}
+  .profile-fields{flex:1;display:flex;flex-direction:column;gap:8px}
+  label{font-size:13px;color:var(--muted)}
+  input[type="text"], input[type="email"], textarea{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff;outline:none}
+  textarea{min-height:80px;resize:vertical}
+
+  /* projects */
+  .project-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+  .project-card{padding:14px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03)}
+  .project-card h4{margin:0 0 6px}
+
+  /* skills */
+  .skill-row{display:flex;align-items:center;gap:8px;justify-content:space-between;padding:8px;border-radius:10px;background:rgba(0,0,0,0.15)}
+  .skill-left{display:flex;gap:8px;align-items:center}
+  .skill-pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03)}
+  .level{font-size:13px;color:var(--muted)}
+
+  /* tasks (simple kanban) */
+  .kanban{display:flex;gap:12px}
+  .kanban-column{flex:1;min-width:200px;background:rgba(255,255,255,0.02);padding:10px;border-radius:10px}
+  .task{background:rgba(255,255,255,0.03);padding:10px;margin-bottom:10px;border-radius:8px;cursor:grab}
+  .task h5{margin:0 0 6px}
+
+  /* documents */
+  .doc-list{display:flex;flex-direction:column;gap:8px}
+  .doc-item{display:flex;justify-content:space-between;gap:12px;padding:10px;border-radius:8px;background:rgba(255,255,255,0.02)}
+  .small{font-size:13px;color:var(--muted)}
+
+  /* github */
+  .repo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+  .repo-card{padding:12px;border-radius:10px;background:rgba(255,255,255,0.02)}
+
+  /* plugins settings */
+  .plugin{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;background:rgba(255,255,255,0.02)}
+
+  /* responsive */
+  @media (max-width: 900px){
+    .sidebar{display:none}
+    .wrap{flex-direction:column}
+    .main{margin:12px}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo">OC</div>
+      <div>
+        <h1>Only Coders</h1>
+        <div class="small muted">The Missing Link</div>
+      </div>
+    </div>
+
+    <nav class="menu">
+      <div class="nav-list">
+        <div class="nav-item active" data-section="home"><svg width="18" height="18"><circle cx="9" cy="9" r="8" stroke="white" stroke-width="0" fill="#9cc3ff"/></svg> Home</div>
+        <div class="nav-item" data-section="profile"><svg width="18" height="18"><circle cx="9" cy="6" r="3" fill="#fff"/><rect x="3" y="10" width="12" height="6" rx="2" fill="#fff"/></svg> Profile</div>
+        <div class="nav-item" data-section="projects"><svg width="18" height="18"><rect x="2" y="3" width="14" height="4" rx="1" fill="#fff"/></svg> Projects</div>
+        <div class="nav-item" data-section="skills"><svg width="18" height="18"><rect x="2" y="10" width="4" height="6" fill="#fff"/><rect x="8" y="6" width="4" height="10" fill="#fff"/><rect x="14" y="2" width="4" height="14" fill="#fff"/></svg> Skills</div>
+        <div class="nav-item" data-section="tasks"><svg width="18" height="18"><rect x="3" y="4" width="12" height="3" rx="1" fill="#fff"/><rect x="3" y="8" width="8" height="3" rx="1" fill="#fff"/><rect x="3" y="12" width="5" height="3" rx="1" fill="#fff"/></svg> Tasks</div>
+        <div class="nav-item" data-section="documents"><svg width="18" height="18"><rect x="3" y="3" width="12" height="12" rx="2" fill="#fff"/></svg> Documents</div>
+      </div>
+
+      <div class="section-title">INTEGRATION</div>
+      <div class="nav-list">
+        <div class="nav-item" data-section="github"><svg width="18" height="18"><path d="M9 .5C4.85.5 1.5 3.85 1.5 8c0 3.3 2.15 6.1 5.15 7.08.38.07.52-.16.52-.37 0-.18-.01-.65-.01-1.28-2.1.46-2.54-.5-2.7-.96-.09-.24-.48-.96-.82-1.15-.28-.15-.68-.53-.01-.54.63-.01 1.08.58 1.23.82.72 1.2 1.86.86 2.32.66.07-.52.28-.86.5-1.06-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.22 2.2.82.64-.18 1.33-.27 2.01-.27.68 0 1.37.09 2.01.27 1.52-1.04 2.19-.82 2.19-.82.45 1.1.17 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.88 3.75-3.67 3.95.29.25.54.73.54 1.47 0 1.06-.01 1.92-.01 2.18 0 .21.14.45.53.37C14.35 14.08 16.5 11.3 16.5 8 16.5 3.85 13.15.5 9 .5z" fill="#fff"/></svg> GitHub</div>
+        <div class="nav-item" data-section="plugins"><svg width="18" height="18"><circle cx="9" cy="9" r="8" fill="#fff"/></svg> Add new plugin</div>
+      </div>
+
+      <div style="margin-top:18px"></div>
+      <div class="nav-item" data-section="settings"><svg width="18" height="18"><circle cx="9" cy="9" r="8" fill="#fff"/></svg> Setting</div>
+    </nav>
+
+    <button class="logout" id="logoutBtn">Log out</button>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div class="top-left">
+        <div style="width:20px"></div>
+        <div class="small muted">Dashboard</div>
+      </div>
+      <div class="search">
+        <input type="search" id="searchInput" placeholder="Search" />
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- HOME -->
+      <section class="section active" id="home">
+        <div class="welcome card">
+          <div>
+            <h2>Welcome back, <span id="userDisplay">User</span></h2>
+            <div class="muted">Here's what's happening with your account today.</div>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary" id="quickAddSkill">+ Skill</button>
+            <button class="btn btn-primary" id="quickAddTask">+ Task</button>
+            <button class="btn btn-primary" id="quickUploadDoc">+ Document</button>
+          </div>
+        </div>
+
+        <div class="grid-4">
+          <div class="card stat"><h3 id="statTasks">0</h3><div class="muted">Tasks</div></div>
+          <div class="card stat"><h3 id="statSkills">0</h3><div class="muted">Skills</div></div>
+          <div class="card stat"><h3 id="statProjects">0</h3><div class="muted">Projects</div></div>
+          <div class="card stat"><h3 id="statDocs">0</h3><div class="muted">Documents</div></div>
+        </div>
+
+        <div class="card">
+          <h4>Recent Activity</h4>
+          <ul id="recentActivity" class="small"></ul>
+        </div>
+      </section>
+
+      <!-- PROFILE -->
+      <section class="section" id="profile">
+        <div class="card profile-top">
+          <div class="avatar" id="avatarWrap">
+            <img id="avatarImg" src="" alt="avatar" style="display:none" />
+            <div id="avatarPlaceholder" style="color:var(--muted)">No Photo</div>
+          </div>
+          <div class="profile-fields">
+            <label>Name</label>
+            <input type="text" id="profileName" placeholder="Your name" />
+            <label>Username</label>
+            <input type="text" id="profileUsername" placeholder="username" />
+            <label>Email</label>
+            <input type="email" id="profileEmail" placeholder="email" />
+            <label>Bio</label>
+            <textarea id="profileBio" placeholder="Short bio"></textarea>
+            <div style="display:flex;gap:8px">
+              <input type="file" id="profilePicInput" accept="image/*" />
+              <button class="btn btn-primary" id="saveProfileBtn">Save Profile</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROJECTS -->
+      <section class="section" id="projects">
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+          <h3>Projects</h3>
+          <button class="btn btn-primary" id="addProjectBtn">Add Project</button>
+        </div>
+        <div id="projectsGrid" class="project-grid"></div>
+      </section>
+
+      <!-- SKILLS -->
+      <section class="section" id="skills">
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+          <h3>Skills</h3>
+          <div>
+            <input type="text" id="newSkillName" placeholder="Skill name" />
+            <select id="newSkillLevel">
+              <option value="1">1 — Beginner</option>
+              <option value="2">2 — Novice</option>
+              <option value="3">3 — Competent</option>
+              <option value="4">4 — Proficient</option>
+              <option value="5">5 — Expert</option>
+            </select>
+            <button class="btn btn-primary" id="addSkillBtn">Add</button>
+          </div>
+        </div>
+        <div id="skillsList" style="margin-top:12px;display:flex;flex-direction:column;gap:8px"></div>
+      </section>
+
+      <!-- TASKS -->
+      <section class="section" id="tasks">
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+          <h3>Tasks</h3>
+          <div>
+            <input type="text" id="taskTitleInput" placeholder="Task title" />
+            <button class="btn btn-primary" id="addTaskBtn">Add Task</button>
+          </div>
+        </div>
+        <div class="kanban" style="margin-top:12px">
+          <div class="kanban-column" data-col="todo"><h4>To Do</h4><div id="col-todo" class="col-list"></div></div>
+          <div class="kanban-column" data-col="inprogress"><h4>In Progress</h4><div id="col-inprogress" class="col-list"></div></div>
+          <div class="kanban-column" data-col="done"><h4>Completed</h4><div id="col-done" class="col-list"></div></div>
+        </div>
+      </section>
+
+      <!-- DOCUMENTS -->
+      <section class="section" id="documents">
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+          <h3>Documents</h3>
+          <div>
+            <input type="file" id="docUpload" />
+            <button class="btn btn-primary" id="uploadDocBtn">Upload</button>
+          </div>
+        </div>
+        <div id="docsList" class="doc-list" style="margin-top:12px"></div>
+      </section>
+
+      <!-- GITHUB -->
+      <section class="section" id="github">
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+          <h3>GitHub Integration</h3>
+          <div>
+            <button class="btn btn-primary" id="githubConnect">Connect GitHub</button>
+            <input type="text" id="pasteGithubToken" placeholder="or paste token" />
+            <button class="btn btn-primary" id="saveGithubToken">Save Token</button>
+            <button class="btn" id="fetchReposBtn">Fetch Repos</button>
+          </div>
+        </div>
+        <div id="reposGrid" class="repo-grid" style="margin-top:12px"></div>
+      </section>
+
+      <!-- PLUGINS -->
+      <section class="section" id="plugins">
+        <div class="card">
+          <h3>Plugins</h3>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+            <div class="plugin"><div>Notion</div><label><input type="checkbox" id="pluginNotion"> Enable</label></div>
+            <div class="plugin"><div>Calendar</div><label><input type="checkbox" id="pluginCalendar"> Enable</label></div>
+            <div class="plugin"><div>Slack</div><label><input type="checkbox" id="pluginSlack"> Enable</label></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="section" id="settings">
+        <div class="card">
+          <h3>Settings</h3>
+          <label>Change Password</label>
+          <input type="password" id="newPassword" placeholder="New password" />
+          <label>Notifications</label>
+          <select id="notifPref"><option value="all">All</option><option value="email">Email only</option><option value="none">None</option></select>
+          <label>Theme</label>
+          <select id="themePref"><option value="dark">Dark</option><option value="light">Light</option></select>
+          <div style="margin-top:12px"><button class="btn btn-primary" id="saveSettingsBtn">Save Settings</button></div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<script>
+/* ---------------------------
+  
+   --------------------------- */
+
+const API_BASE = "http://127.0.0.1:8000"; /*fetching backend*/
+
+// Utilities
+const byId = id => document.getElementById(id);
+const fmt = s => (s||"").toString();
+
+// Local storage keys
+const LS_USER = "oc_active_user";
+const LS_PROJECTS = "oc_projects";
+const LS_SKILLS = "oc_skills";
+const LS_TASKS = "oc_tasks";
+const LS_DOCS = "oc_docs";
+const LS_ACTIVITY = "oc_activity";
+const LS_GITHUB_TOKEN = "oc_github_token";
+const LS_PLUGINS = "oc_plugins";
+const LS_SETTINGS = "oc_settings";
+
+// Helper functions
+function loadData(key, def){ try{ return JSON.parse(localStorage.getItem(key)) || def } catch(e){ return def } }
+function saveData(key, val){ localStorage.setItem(key, JSON.stringify(val)) }
+function addActivity(msg){
+  const arr = loadData(LS_ACTIVITY, []);
+  arr.unshift({msg, t: new Date().toISOString()});
+  saveData(LS_ACTIVITY, arr);
+  renderActivity();
+}
+function renderActivity(){
+  const list = byId("recentActivity");
+  const arr = loadData(LS_ACTIVITY, []);
+  list.innerHTML = arr.slice(0,10).map(a=>`<li>${a.msg} <span class="small muted"> - ${new Date(a.t).toLocaleString()}</span></li>`).join("");
+}
+
+/* ---------------------------
+   Navigation
+   --------------------------- */
+document.querySelectorAll('.nav-item').forEach(el=>{
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    el.classList.add('active');
+    const sec = el.dataset.section;
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    const sel = document.getElementById(sec);
+    if(sel) sel.classList.add('active');
+  });
+});
+
+/* ---------------------------
+   User/Profile
+   --------------------------- */
+async function loadUser() {
+  try {
+    const res = await fetch(`${API_BASE}/api/user`);
+    if(!res.ok) throw new Error("Backend fetch failed");
+    const user = await res.json();
+    saveData(LS_USER, user);
+  } catch(err) {
+    console.warn("Using local user due to backend error:", err);
+  }
+  loadUserToUI();
+}
+
+function loadUserToUI(){
+  const user = loadData(LS_USER, {name:"Developer", username:"dev", email:"you@example.com", bio:""});
+  byId("userDisplay").textContent = user.name || "User";
+  byId("profileName").value = user.name || "";
+  byId("profileUsername").value = user.username || "";
+  byId("profileEmail").value = user.email || "";
+  byId("profileBio").value = user.bio || "";
+  if(user.profilePic){
+    byId("avatarImg").src = user.profilePic;
+    byId("avatarImg").style.display = "block";
+    byId("avatarPlaceholder").style.display = "none";
+  }
+}
+loadUser();
+renderActivity();
+
+byId("saveProfileBtn").addEventListener('click', async ()=>{
+  const user = loadData(LS_USER, {});
+  user.name = byId("profileName").value;
+  user.username = byId("profileUsername").value;
+  user.email = byId("profileEmail").value;
+  user.bio = byId("profileBio").value;
+  saveData(LS_USER, user);
+  loadUserToUI();
+  addActivity("Profile updated");
+
+  try {
+    await fetch(`${API_BASE}/api/user`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(user)
+    });
+  } catch(err) {
+    console.warn("Backend save failed, saved locally", err);
+  }
+
+  alert("Profile saved");
+});
+
+byId("profilePicInput").addEventListener('change', (e)=>{
+  const f = e.target.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = async () => {
+    const user = loadData(LS_USER, {});
+    user.profilePic = reader.result;
+    saveData(LS_USER, user);
+    loadUserToUI();
+    addActivity("Profile picture updated");
+    try {
+      await fetch(`${API_BASE}/api/user/profile-pic`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profilePic: user.profilePic })
+      });
+    } catch(err){ console.warn("Backend save failed", err); }
+  };
+  reader.readAsDataURL(f);
+});
+
+/* ---------------------------
+   Projects
+   --------------------------- */
+async function loadProjects() {
+  try {
+    const res = await fetch(`${API_BASE}/api/projects`);
+    if(!res.ok) throw new Error("Backend fetch failed");
+    const projects = await res.json();
+    saveData(LS_PROJECTS, projects);
+  } catch(err) {
+    console.warn("Using local projects due to backend error:", err);
+  }
+  renderProjects();
+}
+
+function renderProjects(){
+  const arr = loadData(LS_PROJECTS, []);
+  const grid = byId("projectsGrid");
+  byId("statProjects").textContent = arr.length;
+  grid.innerHTML = arr.map((p, i) => `
+    <div class="project-card card">
+      <h4>${p.title}</h4>
+      <div class="small muted">${p.tech || ""}</div>
+      <p>${p.desc || ""}</p>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button data-i="${i}" class="btn editProject">Edit</button>
+        <button data-i="${i}" class="btn" style="background:transparent;border:1px solid rgba(255,255,255,0.06)">View</button>
+        <button data-i="${i}" class="btn deleteProject" style="background:#a00">Delete</button>
+      </div>
+    </div>
+  `).join("");
+
+  document.querySelectorAll('.deleteProject').forEach(b=>{
+    b.addEventListener('click', async () => {
+      const i = +b.dataset.i;
+      const arr = loadData(LS_PROJECTS, []);
+      const p = arr[i];
+      arr.splice(i,1);
+      saveData(LS_PROJECTS, arr);
+      renderProjects();
+      addActivity("Project deleted");
+      try { await fetch(`${API_BASE}/api/projects/${p.id || i}`, { method: "DELETE" }); } 
+      catch(err){ console.warn("Backend delete failed", err); }
+    });
+  });
+
+  document.querySelectorAll('.editProject').forEach(b=>{
+    b.addEventListener('click', async () => {
+      const i = +b.dataset.i;
+      const arr = loadData(LS_PROJECTS, []);
+      const p = arr[i];
+      const title = prompt("Project title", p.title);
+      if(title===null) return;
+      const desc = prompt("Project description", p.desc);
+      p.title = title; p.desc = desc;
+      saveData(LS_PROJECTS, arr);
+      renderProjects();
+      addActivity("Project edited");
+      try { await fetch(`${API_BASE}/api/projects/${p.id || i}`, {
+        method:"PUT",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify(p)
+      }); } catch(err){ console.warn("Backend edit failed", err); }
+    });
+  });
+}
+byId("addProjectBtn").addEventListener('click', async ()=>{
+  const title = prompt("Project title");
+  if(!title) return;
+  const tech = prompt("Tech / tags (comma separated)");
+  const desc = prompt("Short description");
+  const arr = loadData(LS_PROJECTS, []);
+  const project = {title, tech, desc, created:new Date().toISOString()};
+  arr.unshift(project);
+  saveData(LS_PROJECTS, arr);
+  renderProjects();
+  addActivity("Project added");
+  try { await fetch(`${API_BASE}/api/projects`, {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify(project)
+  }); } catch(err){ console.warn("Backend save failed", err); }
+});
+loadProjects();
+
+/* ---------------------------
+   Skills
+   --------------------------- */
+async function loadSkills(){
+  try {
+    const res = await fetch(`${API_BASE}/api/skills`);
+    if(!res.ok) throw new Error("Backend fetch failed");
+    const skills = await res.json();
+    saveData(LS_SKILLS, skills);
+  } catch(err){ console.warn("Using local skills due to backend error:", err); }
+  renderSkills();
+}
+
+function renderSkills(){
+  const arr = loadData(LS_SKILLS, []);
+  byId("statSkills").textContent = arr.length;
+  const list = byId("skillsList");
+  list.innerHTML = arr.map((s,i)=>`
+    <div class="skill-row">
+      <div class="skill-left"><div class="skill-pill">${s.name}</div><div class="level">Level ${s.level}</div></div>
+      <div>
+        <button data-i="${i}" class="btn editSkill">Edit</button>
+        <button data-i="${i}" class="btn deleteSkill">Delete</button>
+      </div>
+    </div>
+  `).join("");
+  document.querySelectorAll('.deleteSkill').forEach(b=>{
+    b.addEventListener('click', async ()=>{
+      const i=+b.dataset.i; 
+      const a=loadData(LS_SKILLS,[]); 
+      const s=a[i];
+      a.splice(i,1); 
+      saveData(LS_SKILLS,a); 
+      renderSkills(); 
+      addActivity("Skill removed");
+      try { await fetch(`${API_BASE}/api/skills/${s.id || i}`, {method:"DELETE"}); } 
+      catch(err){ console.warn("Backend delete failed", err); }
+    });
+  });
+  document.querySelectorAll('.editSkill').forEach(b=>{
+    b.addEventListener('click', async ()=>{
+      const i=+b.dataset.i; 
+      const a=loadData(LS_SKILLS,[]); 
+      const s=a[i]; 
+      const name=prompt("Skill name", s.name); 
+      if(name===null) return; 
+      const level=prompt("Level 1-5", s.level); 
+      s.name=name; s.level=+level; 
+      saveData(LS_SKILLS,a); 
+      renderSkills(); 
+      addActivity("Skill edited");
+      try { await fetch(`${API_BASE}/api/skills/${s.id || i}`, {
+        method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify(s)
+      }); } catch(err){ console.warn("Backend edit failed", err); }
+    });
+  });
+}
+
+byId("addSkillBtn").addEventListener('click', async ()=>{
+  const name = byId("newSkillName").value.trim();
+  const level = +byId("newSkillLevel").value;
+  if(!name) return alert("Enter skill name");
+  const arr = loadData(LS_SKILLS, []);
+  const skill = {name, level};
+  arr.unshift(skill);
+  saveData(LS_SKILLS, arr);
+  byId("newSkillName").value="";
+  renderSkills();
+  addActivity("Skill added");
+  try { await fetch(`${API_BASE}/api/skills`, {
+    method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(skill)
+  }); } catch(err){ console.warn("Backend save failed", err); }
+});
+loadSkills();
+
+/* ---------------------------
+   Tasks
+   --------------------------- */
+async function loadTasks() {
+  try {
+    const res = await fetch(`${API_BASE}/api/tasks`);
+    if(!res.ok) throw new Error("Backend fetch failed");
+    const tasks = await res.json();
+    saveData(LS_TASKS, tasks);
+  } catch(err){ console.warn("Using local tasks due to backend error:", err); }
+  renderTasks();
+}
+
+function renderTasks() {
+  const todos = loadData(LS_TASKS, []);
+  byId("col-todo").innerHTML = todos.filter(t=>t.col==="todo").map(taskHtml).join("");
+  byId("col-inprogress").innerHTML = todos.filter(t=>t.col==="inprogress").map(taskHtml).join("");
+  byId("col-done").innerHTML = todos.filter(t=>t.col==="done").map(taskHtml).join("");
+  byId("statTasks").textContent = todos.length;
+  bindTaskActions();
+}
+
+function taskHtml(t){
+  return `<div class="task" draggable="true" data-id="${t.id}"><h5>${t.title}</h5><div class="small muted">${t.priority || ''}</div></div>`;
+}
+
+function bindTaskActions(){
+  document.querySelectorAll('.task').forEach(el=>{
+    el.addEventListener('dragstart', (e)=>{ e.dataTransfer.setData('text/plain', el.dataset.id); });
+    el.addEventListener('dblclick', async ()=> {
+      const id = el.dataset.id;
+      const arr = loadData(LS_TASKS, []);
+      const t = arr.find(x=>x.id===id);
+      const newTitle = prompt("Edit title", t.title);
+      if(newTitle!==null){ t.title=newTitle; saveData(LS_TASKS, arr); renderTasks(); addActivity("Task edited");
+        try { await fetch(`${API_BASE}/api/tasks/${id}`, {method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify(t)}); } catch(err){ console.warn("Backend edit failed", err);}
+      }
+    });
+  });
+  document.querySelectorAll('.col-list').forEach(col=>{
+    col.addEventListener('dragover', e=>e.preventDefault());
+    col.addEventListener('drop', async e=>{
+      const id = e.dataTransfer.getData('text/plain');
+      const arr = loadData(LS_TASKS, []);
+      const t = arr.find(x=>x.id===id);
+      if(!t) return;
+      const colName = col.id.replace('col-','');
+      t.col = colName;
+      saveData(LS_TASKS, arr);
+      renderTasks();
+      addActivity(`Task moved to ${colName}`);
+      try { await fetch(`${API_BASE}/api/tasks/${id}`, {method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify(t)}); } catch(err){ console.warn("Backend move failed", err);}
+    });
+  });
+}
+
+byId("addTaskBtn").addEventListener('click', async ()=>{
+  const title = byId("taskTitleInput").value.trim();
+  if(!title) return alert("Enter task title");
+  const arr = loadData(LS_TASKS, []);
+  const id = 't_'+Date.now();
+  const task = {id, title, col:"todo", priority:"Normal", created:new Date().toISOString()};
+  arr.unshift(task);
+  saveData(LS_TASKS, arr);
+  byId("taskTitleInput").value="";
+  renderTasks();
+  addActivity("Task added");
+  try { await fetch(`${API_BASE}/api/tasks`, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(task)}); } catch(err){ console.warn("Backend save failed", err);}
+});
+loadTasks();
+
+/* ---------------------------
+   Documents
+   --------------------------- */
+async function loadDocs() {
+  try {
+    const res = await fetch(`${API_BASE}/api/docs`);
+    if(!res.ok) throw new Error("Backend fetch failed");
+    const docs = await res.json();
+    saveData(LS_DOCS, docs);
+  } catch(err){ console.warn("Using local docs due to backend error:", err); }
+  renderDocs();
+}
+
+function renderDocs() {
+  const docs = loadData(LS_DOCS, []);
+  byId("statDocs").textContent = docs.length;
+  const container = byId("docsList");
+  container.innerHTML = docs.map((d,i)=>`
+    <div class="doc-item">
+      <div><strong>${d.name}</strong><div class="small muted">${new Date(d.t).toLocaleString()}</div></div>
+      <div>
+        <a href="${d.url}" download="${d.name}" class="small">Download</a>
+        <button data-i="${i}" class="btn deleteDoc">Delete</button>
+      </div>
+    </div>
+  `).join("");
+
+  document.querySelectorAll('.deleteDoc').forEach(b=>b.addEventListener('click', async ()=>{
+    const i = +b.dataset.i;
+    const arr = loadData(LS_DOCS, []);
+    const doc = arr[i];
+    arr.splice(i,1);
+    saveData(LS_DOCS, arr);
+    renderDocs();
+    addActivity("Document deleted");
+    try { await fetch(`${API_BASE}/api/docs/${doc.id || i}`, {method:"DELETE"}); } catch(err){ console.warn("Backend delete failed", err);}
+  }));
+}
+
+byId("uploadDocBtn").addEventListener('click', ()=>{
+  const input = byId("docUpload");
+  if(!input.files[0]) return alert("Choose a file");
+  const f = input.files[0];
+  const reader = new FileReader();
+  reader.onload = async ()=> {
+    const arr = loadData(LS_DOCS, []);
+    const doc = { id:'d_'+Date.now(), name:f.name, t:new Date().toISOString(), url: reader.result};
+    arr.unshift(doc);
+    saveData(LS_DOCS, arr);
+    renderDocs();
+    addActivity("Document uploaded");
+    input.value = "";
+    try { await fetch(`${API_BASE}/api/docs`, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(doc)}); } catch(err){ console.warn("Backend save failed", err);}
+  };
+  reader.readAsDataURL(f);
+});
+loadDocs();
+
+/* ---------------------------
+   GitHub Integration
+   --------------------------- */
+byId("githubConnect").addEventListener('click', ()=>{ window.location.href = API_BASE + "/api/github/login"; });
+byId("saveGithubToken").addEventListener('click', ()=>{
+  const t = byId("pasteGithubToken").value.trim();
+  if(!t) return alert("Paste a valid token");
+  localStorage.setItem(LS_GITHUB_TOKEN, t);
+  addActivity("GitHub token saved locally (demo)");
+  alert("Token saved — now click Fetch Repos");
+});
+byId("fetchReposBtn").addEventListener('click', async ()=>{
+  const token = localStorage.getItem(LS_GITHUB_TOKEN);
+  if(!token) return alert("No GitHub token saved. Connect or paste a token.");
+  try{
+    const res = await fetch(`${API_BASE}/api/github/projects?access_token=${encodeURIComponent(token)}`);
+    if(!res.ok){
+      const ghRes = await fetch("https://api.github.com/user/repos", { headers: { Authorization: "token " + token }});
+      const repos = await ghRes.json();
+      renderReposFromGitHub(repos);
+      addActivity("Fetched repos directly from GitHub (fallback)");
+      return;
+    }
+    const saved = await res.json();
+    renderReposFromBackend(saved);
+    addActivity("Fetched repos via backend");
+  } catch (err){
+    console.error(err);
+    alert("Error fetching repos");
+  }
+});
+function renderReposFromBackend(list){
+  const grid = byId("reposGrid");
+  grid.innerHTML = list.map(r=>`<div class="repo-card card"><h4>${r.title}</h4><div class="small muted">${r.skills?.language || ""}</div><p>${(r.content||"").slice(0,200)}</p></div>`).join("");
+}
+function renderReposFromGitHub(list){
+  const grid = byId("reposGrid");
+  grid.innerHTML = list.map(r=>`<div class="repo-card card"><h4>${r.name}</h4><div class="small muted">${r.language || ""} • ★ ${r.stargazers_count || 0}</div><p>${r.description || ""}</p><a href="${r.html_url}" target="_blank" class="small">Open</a></div>`).join("");
+}
+
+/* ---------------------------
+   Plugins
+   --------------------------- */
+document.querySelectorAll('#plugins input[type="checkbox"]').forEach(cb=>{
+  const state = loadData(LS_PLUGINS, {});
+  cb.checked = !!state[cb.id];
+  cb.addEventListener('change', ()=>{
+    const s = loadData(LS_PLUGINS, {});
+    s[cb.id] = cb.checked;
+    saveData(LS_PLUGINS, s);
+    addActivity(`${cb.id} ${cb.checked? "enabled":"disabled"}`);
+  });
+});
+
+/* ---------------------------
+   Settings
+   --------------------------- */
+byId("saveSettingsBtn").addEventListener('click', ()=>{
+  const s = {
+    password: byId("newPassword").value || null,
+    notifications: byId("notifPref").value,
+    theme: byId("themePref").value
+  };
+  saveData(LS_SETTINGS, s);
+  addActivity("Settings saved");
+  alert("Settings saved (local demo)");
+});
+
+/* ---------------------------
+   Quick Actions & Search
+   --------------------------- */
+byId("quickAddSkill").addEventListener('click', ()=> { document.querySelector('[data-section="skills"]').click(); byId("newSkillName").focus(); });
+byId("quickAddTask").addEventListener('click', ()=> { document.querySelector('[data-section="tasks"]').click(); byId("taskTitleInput").focus(); });
+byId("quickUploadDoc").addEventListener('click', ()=> { document.querySelector('[data-section="documents"]').click(); });
+
+byId("searchInput").addEventListener('input', (e)=>{
+  const q = e.target.value.toLowerCase();
+  const projects = loadData(LS_PROJECTS, []);
+  const matches = projects.filter(p=> (p.title||"").toLowerCase().includes(q));
+  if(q && matches.length){
+    byId("recentActivity").innerHTML = matches.slice(0,5).map(m=>`<li>Project match: ${m.title}</li>`).join("");
+  } else { renderActivity(); }
+});
+
+/* ---------------------------
+   Logout
+   --------------------------- */
+byId("logoutBtn").addEventListener('click', ()=>{
+  localStorage.removeItem(LS_USER);
+  localStorage.removeItem(LS_GITHUB_TOKEN);
+  alert("Logged out (local demo)");
+  window.location.href = "index.html";
+});
+
+/* ---------------------------
+   Put demo if empty
+   --------------------------- */
+(function initDemo(){
+  if(!localStorage.getItem(LS_USER)) saveData(LS_USER, {name:"Robin Dev", username:"robindev", email:"robin@example.com", bio:"I love building things.", profilePic:null});
+  if(!localStorage.getItem(LS_PROJECTS)) saveData(LS_PROJECTS, [{title:"Portfolio", desc:"My personal portfolio site", tech:"HTML,CSS,JS"}]);
+  if(!localStorage.getItem(LS_SKILLS)) saveData(LS_SKILLS, [{name:"JavaScript", level:4},{name:"Python", level:4}]);
+  if(!localStorage.getItem(LS_TASKS)) saveData(LS_TASKS, [{id:"t1",title:"Finish README",col:"todo"},{id:"t2",title:"Deploy backend",col:"inprogress"},{id:"t3",title:"Apply to jobs",col:"done"}]);
+  if(!localStorage.getItem(LS_DOCS)) saveData(LS_DOCS, []);
+  if(!localStorage.getItem(LS_ACTIVITY)) saveData(LS_ACTIVITY, [{msg:"Welcome to Only Coders dashboard",t:new Date().toISOString()}]);
+  if(!localStorage.getItem(LS_PLUGINS)) saveData(LS_PLUGINS, {});
+})();
+</script>
+
+</body>
+</html>
